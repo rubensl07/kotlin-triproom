@@ -28,6 +28,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import br.senai.sp.jandira.triproom.R
+import br.senai.sp.jandira.triproom.repository.CategoriasRepository
 import br.senai.sp.jandira.triproom.repository.ViagemRepository
 import br.senai.sp.jandira.triproom.simplificarData
 import br.senai.sp.jandira.triproom.ui.theme.TripRoomTheme
@@ -48,6 +51,15 @@ import br.senai.sp.jandira.triproom.ui.theme.TripRoomTheme
 @Composable
 fun Home(navigationController: NavHostController?) {
     val viagens = ViagemRepository().listarTodasAsViagens(LocalContext.current)
+    val categorias = CategoriasRepository().listarTodasAsCategorias(LocalContext.current)
+    var atualLocation = remember {
+        mutableStateOf("Paris")
+    }
+    var mainBackground = remember {
+        mutableStateOf(R.drawable.paris_background)
+    }
+
+
     TripRoomTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -70,7 +82,7 @@ fun Home(navigationController: NavHostController?) {
                         Image(
                             modifier = Modifier
                                 .fillMaxSize(),
-                            painter = painterResource(id = R.drawable.paris_background),
+                            painter = painterResource(id = mainBackground.value),
                             contentDescription = "Background",
                             contentScale = ContentScale.FillWidth
                         )
@@ -99,7 +111,7 @@ fun Home(navigationController: NavHostController?) {
                                         contentDescription = "Ícone de localizacao",
                                         tint = Color.White
                                     )
-                                    Text(text = "You're in Paris", color = Color.White)
+                                    Text(text = "You're in ${atualLocation.value}", color = Color.White)
                                 }
                                 Text(
                                     text = "My Trips",
@@ -125,7 +137,7 @@ fun Home(navigationController: NavHostController?) {
                                 .fillMaxWidth()
                                 .padding(bottom = 16.dp)
                         ) {
-                            items(3) {
+                            items(categorias) {
                                 Card(
                                     modifier = Modifier
                                         .height(74.dp)
@@ -138,11 +150,11 @@ fun Home(navigationController: NavHostController?) {
                                 ) {
                                     Column (modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
                                         Icon(
-                                            imageVector = Icons.Default.Landscape,
-                                            contentDescription = "Ícone Mountains",
+                                            imageVector = it.icon!!,
+                                            contentDescription = "Ícone ${it.nome}",
                                             tint = Color.White
                                         )
-                                        Text(text = "Mountain", color = Color.White)
+                                        Text(text = it.nome, color = Color.White)
                                     }
                                 }
 
