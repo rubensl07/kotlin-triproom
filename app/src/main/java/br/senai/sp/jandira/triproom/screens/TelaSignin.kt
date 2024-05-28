@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -49,21 +50,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import br.senai.sp.jandira.triproom.R
+import br.senai.sp.jandira.triproom.model.Usuario
+import br.senai.sp.jandira.triproom.repository.UsuarioRepository
 import br.senai.sp.jandira.triproom.ui.theme.TripRoomTheme
 
 @Composable
 fun TelaSignin(navigationController: NavHostController) {
+
+    var ur = UsuarioRepository(LocalContext.current)
     var nome = remember {
-        mutableStateOf("Suzanna Hoffs")
+        mutableStateOf("")
     }
     var telefone = remember {
-        mutableStateOf("99999-0987")
+        mutableStateOf("")
     }
     var email = remember {
-        mutableStateOf("teste@email.com")
+        mutableStateOf("")
     }
     var senha = remember {
-        mutableStateOf("Senhateste123")
+        mutableStateOf("")
     }
     var over18 = remember {
         mutableStateOf(false)
@@ -237,7 +242,19 @@ fun TelaSignin(navigationController: NavHostController) {
                     }
 
                     Button(onClick = {
-                        navigationController.navigate("home")
+
+                        val usuario = Usuario(
+                            nome = nome.value,
+                            email = email.value,
+                            telefone = telefone.value,
+                            senha = senha.value,
+                            isOver18 = over18.value
+                            )
+
+                        if(nome.value != "" || email.value != ""||telefone.value != ""||senha.value != ""){
+                            ur.salvar(usuario = usuario)
+                            navigationController.navigate("login")
+                        }
 
                     },
                         colors = ButtonDefaults.buttonColors(Color(0xffCF06F0)),

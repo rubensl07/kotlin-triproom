@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,16 +41,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import br.senai.sp.jandira.triproom.R
+import br.senai.sp.jandira.triproom.repository.UsuarioRepository
 import br.senai.sp.jandira.triproom.ui.theme.TripRoomTheme
 
 
 @Composable
-fun TelaLogin(navigationController: NavHostController) {
+fun TelaLogin(navigationController: NavHostController?) {
+
+    var ur= UsuarioRepository(LocalContext.current)
+
     var email = remember {
-        mutableStateOf("teste@email.com")
+        mutableStateOf("")
     }
     var senha = remember {
-        mutableStateOf("Senhateste123")
+        mutableStateOf("")
     }
     var isErrorState = remember {
         mutableStateOf(false)
@@ -135,8 +140,13 @@ fun TelaLogin(navigationController: NavHostController) {
                     }
 
                     Button(onClick = {
-                        if(email.value == "teste@email.com" && senha.value == "Senhateste123") {
-                            navigationController.navigate("home")
+
+                        var (usuarioEncontrado, dadosUsuario) = ur.buscarUsuarioPeloEmailSenha(email.value,senha.value)
+
+                        if(usuarioEncontrado){
+                            if (navigationController != null) {
+                                navigationController.navigate("home")
+                            }
                         } else {
                             isErrorState.value = true
                             mensagemErroState.value = "Usuário ou senha inválidos!"
@@ -165,7 +175,10 @@ fun TelaLogin(navigationController: NavHostController) {
                         .padding(16.dp)
                     ){
                         Text(text = "Don't have an account? ", color = Color(0xFFA09C9C))
-                        Text(modifier = Modifier.clickable {                        navigationController.navigate("signin")
+                        Text(modifier = Modifier.clickable {
+                            if (navigationController != null) {
+                                navigationController.navigate("signin")
+                            }
                         }, text = "Sign up", color = Color(0xFFCF06F0), fontWeight = FontWeight.ExtraBold)
                     }
                 }
@@ -199,7 +212,7 @@ fun telaLoginPreview(){
             modifier = Modifier.fillMaxSize(),
             color = Color(0xFF673AB7)
         ){
-//            TelaLogin(navigationController)
+            TelaLogin(navigationController = null)
         }
     }
 }
