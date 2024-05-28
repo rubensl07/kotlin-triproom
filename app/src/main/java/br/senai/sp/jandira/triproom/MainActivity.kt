@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
                         composable(route = "login")  { TelaLogin(navigationController) }
                         composable(route = "signin") { TelaSignin(navigationController) }
                         composable(route = "home")   { Home(navigationController) }
-                        composable(route = "") { Home(navigationController)}
                     }
                 }
             }
